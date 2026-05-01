@@ -1,0 +1,101 @@
+export type QuoteDeity = 'hanuman' | 'shiva' | 'krishna' | 'all';
+
+export interface Quote {
+  text: string;
+  source: string;
+  deity: QuoteDeity;
+}
+
+export const DAILY_QUOTES: Quote[] = [
+  // Hanuman Quotes
+  { text: "Jaya Hanuman gyan gun sagar, Jaya Kapis tihun lok ujagar.", source: "Hanuman Chalisa, Verse 1", deity: "hanuman" },
+  { text: "Ram doot atulit bal dhama, Anjani putra Pavan sut nama.", source: "Hanuman Chalisa, Verse 2", deity: "hanuman" },
+  { text: "Mahavir vikram Bajrangi, Kumati nivar sumati ke sangi.", source: "Hanuman Chalisa, Verse 3", deity: "hanuman" },
+  { text: "Kanchan baran viraj subesa, Kanan kundal kunchit kesa.", source: "Hanuman Chalisa, Verse 4", deity: "hanuman" },
+  { text: "Hath vajra aur dhvaja viraje, Kandhe moonj janeu saje.", source: "Hanuman Chalisa, Verse 5", deity: "hanuman" },
+  { text: "Sankar suvan Kesari nandan, Tej pratap maha jag vandan.", source: "Hanuman Chalisa, Verse 6", deity: "hanuman" },
+  { text: "Vidyavan guni ati chatur, Ram kaj karibe ko aatur.", source: "Hanuman Chalisa, Verse 7", deity: "hanuman" },
+  { text: "Durgam kaj jagat ke jete, Sugam anugraha tumhare tete.", source: "Hanuman Chalisa, Verse 20", deity: "hanuman" },
+  { text: "Ram duare tum rakhvare, Hot na agya binu paisare.", source: "Hanuman Chalisa, Verse 21", deity: "hanuman" },
+  { text: "Sab sukh lahai tumhari sarna, Tum rakshak kahu ko darna.", source: "Hanuman Chalisa, Verse 22", deity: "hanuman" },
+  { text: "Aapan tej samharo aape, Tinon lok hank te kanpe.", source: "Hanuman Chalisa, Verse 23", deity: "hanuman" },
+  { text: "Bhoot pisach nikat nahin ave, Mahavir jab naam sunave.", source: "Hanuman Chalisa, Verse 24", deity: "hanuman" },
+  { text: "Sankat kate mite sab peera, Jo sumirai Hanumat balbeera.", source: "Hanuman Chalisa, Verse 36", deity: "hanuman" },
+  { text: "Pavan tanay sankat haran, Mangal murati roop.", source: "Hanuman Chalisa, Doha", deity: "hanuman" },
+  { text: "Ram Lakhan Sita sahit, Hriday basahu sur bhoop.", source: "Hanuman Chalisa, Doha", deity: "hanuman" },
+  { text: "Strength grows in the moments when you think you can't go on.", source: "Path of Hanuman", deity: "hanuman" },
+  { text: "Let your faith be larger than your fears.", source: "Hanuman's Leap", deity: "hanuman" },
+
+  // Krishna Quotes (Gita)
+  { text: "Whenever dharma declines and adharma rises, I manifest myself.", source: "Bhagavad Gita 4.7", deity: "krishna" },
+  { text: "You have a right to perform your prescribed duties, but you are not entitled to the fruits of your actions.", source: "Bhagavad Gita 2.47", deity: "krishna" },
+  { text: "The soul is neither born, and nor does it die.", source: "Bhagavad Gita 2.20", deity: "krishna" },
+  { text: "As a person puts on new garments, giving up old ones, the soul similarly accepts new material bodies.", source: "Bhagavad Gita 2.22", deity: "krishna" },
+  { text: "For one who has conquered the mind, the mind is the best of friends; but for one who has failed to do so, his mind will remain the greatest enemy.", source: "Bhagavad Gita 6.6", deity: "krishna" },
+  { text: "There is neither this world nor the world beyond nor happiness for the one who doubts.", source: "Bhagavad Gita 4.40", deity: "krishna" },
+  { text: "A person can rise through the efforts of his own mind; or draw himself down, in the same manner.", source: "Bhagavad Gita 6.5", deity: "krishna" },
+  { text: "It is better to live your own destiny imperfectly than to live an imitation of somebody else's life with perfection.", source: "Bhagavad Gita 3.35", deity: "krishna" },
+  { text: "Set thy heart upon thy work, but never on its reward.", source: "Bhagavad Gita", deity: "krishna" },
+  { text: "The peace of God is with them whose mind and soul are in harmony.", source: "Bhagavad Gita", deity: "krishna" },
+  { text: "He who has no attachments can really love others, for his love is pure and divine.", source: "Bhagavad Gita", deity: "krishna" },
+  { text: "A gift is pure when it is given from the heart to the right person at the right time and at the right place, and when we expect nothing in return.", source: "Bhagavad Gita", deity: "krishna" },
+  { text: "We are kept from our goal not by obstacles, but by a clear path to a lesser goal.", source: "Bhagavad Gita", deity: "krishna" },
+  { text: "When meditation is mastered, the mind is unwavering like the flame of a lamp in a windless place.", source: "Bhagavad Gita", deity: "krishna" },
+  { text: "There is nothing lost or wasted in this life.", source: "Bhagavad Gita", deity: "krishna" },
+  { text: "The mind acts like an enemy for those who do not control it.", source: "Bhagavad Gita", deity: "krishna" },
+  { text: "One who sees inaction in action, and action in inaction, is intelligent among men.", source: "Bhagavad Gita 4.18", deity: "krishna" },
+  { text: "Those who are motivated only by desire for the fruits of action are miserable, for they are constantly anxious about the results of what they do.", source: "Bhagavad Gita", deity: "krishna" },
+  { text: "Whatever action a great man performs, common men follow.", source: "Bhagavad Gita 3.21", deity: "krishna" },
+  { text: "Perform your duty equipoised, abandoning all attachment to success or failure.", source: "Bhagavad Gita 2.48", deity: "krishna" },
+
+  // Shiva Quotes
+  { text: "He who has a pure heart and unwavering faith, sees Shiva in everything.", source: "Shiva Purana", deity: "shiva" },
+  { text: "Shiva is the destroyer of ego. Until the ego is dead, true awakening cannot begin.", source: "Shiva Sutras", deity: "shiva" },
+  { text: "The one who wears the crescent moon is the lord of time and the conqueror of death.", source: "Shaiva Wisdom", deity: "shiva" },
+  { text: "To remain calm in the midst of worldly fire is the true penance of Mahadev.", source: "Inner Sadhana", deity: "shiva" },
+  { text: "Meditate upon the soundless sound within; there dwells the absolute Shiva.", source: "Vijnana Bhairava Tantra", deity: "shiva" },
+  { text: "Like the ash on his body, all material things are temporary. Only the soul is eternal.", source: "Shiva Purana", deity: "shiva" },
+  { text: "In the stillness of the mind, the cosmic dancer reveals his eternal truth.", source: "Shaiva Wisdom", deity: "shiva" },
+  { text: "By conquering the mind, the Yogi unites with Parama Shiva.", source: "Shiva Sutras", deity: "shiva" },
+  { text: "He holds the poison in his throat so the world may drink the nectar.", source: "Devotional Wisdom", deity: "shiva" },
+
+  // All / General Spiritual Quotes
+  { text: "The greatest wealth is spiritual wealth.", source: "Ramayana", deity: "all" },
+  { text: "Devotion to the Lord is the only true path to peace.", source: "Ramayana", deity: "all" },
+  { text: "A true devotee sees the Lord in everything and everyone.", source: "Ramayana", deity: "all" },
+  { text: "Righteousness is the foundation of a good life.", source: "Ramayana", deity: "all" },
+  { text: "Truth always triumphs in the end.", source: "Ramayana", deity: "all" },
+  { text: "Humility is the mark of true greatness.", source: "Ramayana", deity: "all" },
+  { text: "Service to others is service to the Divine.", source: "Ramayana", deity: "all" },
+  { text: "Faith can move mountains.", source: "Ramayana", deity: "all" },
+  { text: "Love is the most powerful force in the universe.", source: "Ramayana", deity: "all" },
+  { text: "Forgiveness is the attribute of the strong.", source: "Ramayana", deity: "all" },
+  { text: "Patience is a virtue that leads to success.", source: "Ramayana", deity: "all" },
+  { text: "Compassion is the key to a happy life.", source: "Ramayana", deity: "all" },
+  { text: "Wisdom is knowing what to do, virtue is doing it.", source: "Ramayana", deity: "all" },
+  { text: "The mind is everything. What you think you become.", source: "Spiritual Wisdom", deity: "all" },
+  { text: "Peace comes from within. Do not seek it without.", source: "Spiritual Wisdom", deity: "all" },
+  { text: "Happiness is not something ready made. It comes from your own actions.", source: "Spiritual Wisdom", deity: "all" },
+  { text: "The journey of a thousand miles begins with one step.", source: "Spiritual Wisdom", deity: "all" },
+  { text: "What we think, we become.", source: "Spiritual Wisdom", deity: "all" },
+  { text: "The mind is like water. When it's turbulent, it's difficult to see. When it's calm, everything becomes clear.", source: "Spiritual Wisdom", deity: "all" },
+  { text: "The secret of health for both mind and body is not to mourn for the past, nor to worry about the future, but to live the present moment wisely and earnestly.", source: "Spiritual Wisdom", deity: "all" },
+  { text: "Work out your own salvation. Do not depend on others.", source: "Spiritual Wisdom", deity: "all" },
+  { text: "There is no path to happiness: happiness is the path.", source: "Spiritual Wisdom", deity: "all" },
+  { text: "If you truly loved yourself, you could never hurt another.", source: "Spiritual Wisdom", deity: "all" },
+  { text: "You only lose what you cling to.", source: "Spiritual Wisdom", deity: "all" },
+  { text: "The root of suffering is attachment.", source: "Spiritual Wisdom", deity: "all" },
+  { text: "A disciplined mind brings happiness.", source: "Spiritual Wisdom", deity: "all" },
+  { text: "Give, even if you only have a little.", source: "Spiritual Wisdom", deity: "all" },
+  { text: "No one saves us but ourselves. No one can and no one may. We ourselves must walk the path.", source: "Spiritual Wisdom", deity: "all" },
+  { text: "To understand everything is to forgive everything.", source: "Spiritual Wisdom", deity: "all" },
+  { text: "Your work is to discover your world and then with all your heart give yourself to it.", source: "Spiritual Wisdom", deity: "all" },
+  { text: "The way is not in the sky. The way is in the heart.", source: "Spiritual Wisdom", deity: "all" },
+  { text: "Every morning we are born again. What we do today is what matters most.", source: "Spiritual Wisdom", deity: "all" },
+  { text: "Whatever you do, make it an offering to the Divine.", source: "Bhakti Tradition", deity: "all" },
+  { text: "Courage is not the absence of fear, but the triumph over it.", source: "Inner Sadhana", deity: "all" },
+  { text: "In the heart of the true devotee, the Divine resides forever.", source: "Ramayana", deity: "all" },
+  { text: "A calm mind is the ultimate weapon against your challenges.", source: "Spiritual Wisdom", deity: "all" },
+  { text: "Devotion is not just prayer; it is how you live your daily life.", source: "Karma Yoga", deity: "all" }
+];
+
