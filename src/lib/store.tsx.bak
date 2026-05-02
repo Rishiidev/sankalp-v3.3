@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { getUser, saveUser, getJournalEntries, saveJournalEntry, getCourseProgress, saveCourseProgress, getSessions, saveSession, getCustomAudio, saveCustomAudio, deleteCustomAudio, getMantraPresets, saveMantraPreset, deleteMantraPreset, getCustomSessionTypes, saveCustomSessionType, deleteCustomSessionType, getChantChallenges, saveChantChallenge, deleteChantChallenge, getCustomMeditations, saveCustomMeditation, deleteCustomMeditation } from './db';
 import { differenceInDays, startOfDay } from 'date-fns';
+import { normalizeYoutubeUrl } from './validation';
 
 export type UserLevel = 'Balak' | 'Sevak' | 'Veer' | 'Bhakt' | 'Mahaveer';
 export type Deity = 'hanuman' | 'shiva' | 'krishna';
@@ -12,6 +13,8 @@ export interface UserData {
   xp: number;
   streak: number;
   lastActiveDate: string;
+  /** ISO timestamp — set on first install; used for "Joined" display */
+  createdAt?: string;
   onboardingCompleted: boolean;
   theme?: 'midnight' | 'dawn' | 'temple';
   deity?: Deity;
@@ -108,6 +111,27 @@ interface StoreContextType {
 
 const StoreContext = createContext<StoreContextType | undefined>(undefined);
 
+function createDefaultUser(): UserData {
+  return {
+    id: 'main',
+    name: '',
+    sankalp: '',
+    xp: 0,
+    streak: 0,
+    lastActiveDate: new Date().toISOString(),
+    createdAt: new Date().toISOString(),
+    onboardingCompleted: false,
+    theme: 'midnight',
+    deity: 'hanuman',
+    hapticsEnabled: true,
+    dailyGoals: {
+      malas: 1,
+      focusMinutes: 10,
+      breatheSessions: 1,
+    },
+  };
+}
+
 export function getLevelInfo(xp: number): { level: UserLevel; nextXP: number; progress: number } {
   if (xp < 100) return { level: 'Balak', nextXP: 100, progress: (xp / 100) * 100 };
   if (xp < 300) return { level: 'Sevak', nextXP: 300, progress: ((xp - 100) / 200) * 100 };
@@ -130,122 +154,118 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     async function loadData() {
-      const userData = await getUser();
-      if (userData) {
-        // Check streak
-        const today = startOfDay(new Date());
-        const lastActive = startOfDay(new Date(userData.lastActiveDate));
-        const diff = differenceInDays(today, lastActive);
-        
-        let newStreak = userData.streak;
-        if (diff === 1) {
-          // Streak continues, but we don't increment until they do a task today
-        } else if (diff > 1) {
-          newStreak = 0; // Streak broken
-        }
-
-        const updatedUser: UserData = { ...userData, streak: newStreak, lastActiveDate: new Date().toISOString() };
-        if (diff > 0) {
-          await saveUser(updatedUser);
-        }
-        setUser(updatedUser);
-        const themeClass = updatedUser.theme && updatedUser.theme !== 'midnight' ? `theme-${updatedUser.theme}` : '';
-        const deityClass = updatedUser.deity ? `deity-${updatedUser.deity}` : 'deity-hanuman';
-        document.documentElement.className = [themeClass, deityClass].filter(Boolean).join(' ');
-      } else {
-        const newUser: UserData = {
-          id: 'main',
-          name: '',
-          sankalp: '',
-          xp: 0,
-          streak: 0,
-          lastActiveDate: new Date().toISOString(),
-          onboardingCompleted: false,
-          theme: 'midnight',
-          deity: 'hanuman',
-          hapticsEnabled: true,
-          dailyGoals: {
-            malas: 1,
-            focusMinutes: 10,
-            breatheSessions: 1,
+      try {
+        const userData = await getUser();
+        if (userData) {
+          // Check streak
+          const today = startOfDay(new Date());
+          const lastActive = startOfDay(new Date(userData.lastActiveDate));
+          const diff = differenceInDays(today, lastActive);
+          
+          let newStreak = userData.streak;
+          if (diff === 1) {
+            // Streak continues, but we don't increment until they do a task today
+          } else if (diff > 1) {
+            newStreak = 0; // Streak broken
           }
-        };
-        await saveUser(newUser);
-        setUser(newUser);
-      }
 
-      const journalData = await getJournalEntries();
-      setJournal(journalData.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()));
-
-      const courseData = await getCourseProgress();
-      setCourse(courseData);
-
-      const sessionsData = await getSessions();
-      setSessions(sessionsData.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()));
-
-      const customAudioData = await getCustomAudio();
-      setCustomTracks(customAudioData.map(a => ({
-        id: a.id,
-        name: a.name,
-        url: URL.createObjectURL(a.blob)
-      })));
-
-      let presetsData = await getMantraPresets();
-      const defaults = [
-        { id: 'default_hanuman', name: 'Hanuman Chalisa / Ram Naam', mantra: 'Sri Ram Jai Ram Jai Jai Ram', target: 108 },
-        { id: 'default_shiva', name: 'Shiva Panchakshara', mantra: 'Om Namah Shivaya', target: 108 },
-        { id: 'default_krishna', name: 'Maha Mantra', mantra: 'Hare Krishna Hare Rama', target: 108 }
-      ];
-
-      let needsSave = false;
-      for (const def of defaults) {
-        if (!presetsData.some(p => p.id === def.id)) {
-          presetsData.push(def);
-          await saveMantraPreset(def);
-          needsSave = true;
+          const existing = userData as UserData;
+          const hadCreatedAt = Boolean(existing.createdAt);
+          let updatedUser: UserData = { ...existing, streak: newStreak };
+          if (!hadCreatedAt) {
+            updatedUser = {
+              ...updatedUser,
+              createdAt: userData.lastActiveDate || new Date().toISOString(),
+            };
+          }
+          if (diff > 1 || !hadCreatedAt) {
+            await saveUser(updatedUser);
+          }
+          setUser(updatedUser);
+          const themeClass = updatedUser.theme && updatedUser.theme !== 'midnight' ? `theme-${updatedUser.theme}` : '';
+          const deityClass = updatedUser.deity ? `deity-${updatedUser.deity}` : 'deity-hanuman';
+          document.documentElement.className = [themeClass, deityClass].filter(Boolean).join(' ');
+        } else {
+          const newUser = createDefaultUser();
+          await saveUser(newUser);
+          setUser(newUser);
         }
+
+        const journalData = await getJournalEntries();
+        setJournal(journalData.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()));
+
+        const courseData = await getCourseProgress();
+        setCourse(courseData);
+
+        const sessionsData = await getSessions();
+        setSessions(sessionsData.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()));
+
+        const customAudioData = await getCustomAudio();
+        setCustomTracks(customAudioData.map(a => ({
+          id: a.id,
+          name: a.name,
+          url: URL.createObjectURL(a.blob)
+        })));
+
+        const presetsData = await getMantraPresets();
+        const defaults = [
+          { id: 'default_hanuman', name: 'Hanuman Chalisa / Ram Naam', mantra: 'Sri Ram Jai Ram Jai Jai Ram', target: 108 },
+          { id: 'default_shiva', name: 'Shiva Panchakshara', mantra: 'Om Namah Shivaya', target: 108 },
+          { id: 'default_krishna', name: 'Maha Mantra', mantra: 'Hare Krishna Hare Rama', target: 108 }
+        ];
+
+        for (const def of defaults) {
+          if (!presetsData.some(p => p.id === def.id)) {
+            presetsData.push(def);
+            await saveMantraPreset(def);
+          }
+        }
+        setMantraPresets(presetsData);
+
+        const customTypesData = await getCustomSessionTypes();
+        if (customTypesData.length === 0) {
+          const newType = {
+            id: `custom_type_${Date.now()}`,
+            name: 'Guided Meditation',
+            icon: 'Music',
+            color: '#8b5cf6'
+          };
+          await saveCustomSessionType(newType);
+          setCustomSessionTypes([newType]);
+        } else {
+          setCustomSessionTypes(customTypesData);
+        }
+
+        const challengesData = await getChantChallenges();
+        if (challengesData.length === 0) {
+          const newChallenge = { 
+            id: `challenge_${Date.now()}`, 
+            name: 'Daily Mantra Recitation', 
+            target: 108, 
+            progress: 0, 
+            completed: false,
+            deadline: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString()
+          };
+          await saveChantChallenge(newChallenge);
+          setChantChallenges([newChallenge]);
+        } else {
+          setChantChallenges(challengesData);
+        }
+
+        const customMeditationsData = await getCustomMeditations();
+        setCustomMeditations(customMeditationsData.map(m => ({
+          id: m.id,
+          name: m.name,
+          duration: m.duration,
+          url: URL.createObjectURL(m.blob)
+        })));
+      } catch (error) {
+        console.error('Failed to load local app data', error);
+        setUser(createDefaultUser());
+        document.documentElement.className = 'deity-hanuman';
+      } finally {
+        setLoading(false);
       }
-      setMantraPresets(presetsData);
-
-      const customTypesData = await getCustomSessionTypes();
-      if (customTypesData.length === 0) {
-        const newType = {
-          id: `custom_type_${Date.now()}`,
-          name: 'Guided Meditation',
-          icon: 'Music',
-          color: '#8b5cf6'
-        };
-        await saveCustomSessionType(newType);
-        setCustomSessionTypes([newType]);
-      } else {
-        setCustomSessionTypes(customTypesData);
-      }
-
-      const challengesData = await getChantChallenges();
-      if (challengesData.length === 0) {
-        const newChallenge = { 
-          id: `challenge_${Date.now()}`, 
-          name: 'Daily Mantra Recitation', 
-          target: 108, 
-          progress: 0, 
-          completed: false,
-          deadline: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString()
-        };
-        await saveChantChallenge(newChallenge);
-        setChantChallenges([newChallenge]);
-      } else {
-        setChantChallenges(challengesData);
-      }
-
-      const customMeditationsData = await getCustomMeditations();
-      setCustomMeditations(customMeditationsData.map(m => ({
-        id: m.id,
-        name: m.name,
-        duration: m.duration,
-        url: URL.createObjectURL(m.blob)
-      })));
-
-      setLoading(false);
     }
     loadData();
   }, []);
@@ -345,14 +365,20 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
   };
 
   const removeCustomTrack = async (id: string) => {
+    const existing = customTracks.find(t => t.id === id);
+    if (existing?.url?.startsWith('blob:')) {
+      URL.revokeObjectURL(existing.url);
+    }
     await deleteCustomAudio(id);
     setCustomTracks(customTracks.filter(t => t.id !== id));
   };
 
   const addYoutubeTrack = async (name: string, url: string) => {
     if (!user) return null;
+    const normalizedUrl = normalizeYoutubeUrl(url.trim());
+    if (!normalizedUrl) return null;
     const id = `yt_${Date.now()}`;
-    const newTrack = { id, name, url };
+    const newTrack = { id, name, url: normalizedUrl };
     const newYoutubeTracks = [...(user.youtubeTracks || []), newTrack];
     await updateUser({ youtubeTracks: newYoutubeTracks });
     return newTrack;
@@ -495,6 +521,10 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
   };
 
   const removeCustomMeditation = async (id: string) => {
+    const existing = customMeditations.find(m => m.id === id);
+    if (existing?.url?.startsWith('blob:')) {
+      URL.revokeObjectURL(existing.url);
+    }
     await deleteCustomMeditation(id);
     setCustomMeditations(customMeditations.filter(m => m.id !== id));
   };

@@ -4,11 +4,9 @@ import { useStore } from '../lib/store';
 
 interface LayoutProps {
   children: React.ReactNode;
-  currentTab: string;
-  setTab: (tab: string) => void;
 }
 
-export function Layout({ children, currentTab, setTab }: LayoutProps) {
+export function Layout({ children }: LayoutProps) {
   const { user } = useStore();
 
   if (!user?.onboardingCompleted) {
@@ -20,7 +18,7 @@ export function Layout({ children, currentTab, setTab }: LayoutProps) {
       <main className="max-w-md mx-auto min-h-screen relative">
         {children}
       </main>
-      <BottomNav currentTab={currentTab} setTab={setTab} />
+      <BottomNav />
     </div>
   );
 }

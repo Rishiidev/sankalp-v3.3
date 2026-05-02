@@ -1,19 +1,17 @@
 import React from 'react';
 import { Home, Flame, TrendingUp, User, BookText } from 'lucide-react';
 import { cn } from '../lib/utils';
+import { Link, useLocation } from 'wouter';
 
-interface BottomNavProps {
-  currentTab: string;
-  setTab: (tab: string) => void;
-}
+export function BottomNav() {
+  const [location] = useLocation();
 
-export function BottomNav({ currentTab, setTab }: BottomNavProps) {
   const tabs = [
-    { id: 'home', icon: Home, label: 'Home' },
-    { id: 'sadhana', icon: Flame, label: 'Sadhana' },
-    { id: 'journal', icon: BookText, label: 'Journal' },
-    { id: 'progress', icon: TrendingUp, label: 'Progress' },
-    { id: 'profile', icon: User, label: 'Profile' },
+    { id: '/', icon: Home, label: 'Home' },
+    { id: '/sadhana', icon: Flame, label: 'Sadhana' },
+    { id: '/journal', icon: BookText, label: 'Journal' },
+    { id: '/progress', icon: TrendingUp, label: 'Progress' },
+    { id: '/profile', icon: User, label: 'Profile' },
   ];
 
   return (
@@ -21,19 +19,19 @@ export function BottomNav({ currentTab, setTab }: BottomNavProps) {
       <div className="flex justify-around items-center h-16 max-w-md mx-auto">
         {tabs.map((tab) => {
           const Icon = tab.icon;
-          const isActive = currentTab === tab.id;
+          const isActive = location === tab.id || (location === '/' && tab.id === '/');
           return (
-            <button
-              key={tab.id}
-              onClick={() => setTab(tab.id)}
-              className={cn(
-                "flex flex-col items-center justify-center w-full h-full space-y-1 transition-colors",
-                isActive ? "text-orange-500" : "text-slate-500 hover:text-slate-400"
-              )}
-            >
-              <Icon size={24} strokeWidth={isActive ? 2.5 : 2} />
-              <span className="text-[10px] font-medium">{tab.label}</span>
-            </button>
+            <Link key={tab.id} href={tab.id}>
+              <button
+                className={cn(
+                  "flex flex-col items-center justify-center w-full h-full space-y-1 transition-colors",
+                  isActive ? "text-orange-500" : "text-slate-500 hover:text-slate-400"
+                )}
+              >
+                <Icon size={24} strokeWidth={isActive ? 2.5 : 2} />
+                <span className="text-[10px] font-medium">{tab.label}</span>
+              </button>
+            </Link>
           );
         })}
       </div>

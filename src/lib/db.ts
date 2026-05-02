@@ -1,102 +1,60 @@
 import { openDB, DBSchema, IDBPDatabase } from 'idb';
+import type {
+  UserData,
+  JournalEntry,
+  CourseCompletion,
+  Session,
+  CustomAudioRecord,
+  MantraPreset,
+  CustomSessionType,
+  ChantChallenge,
+  CustomMeditationRecord,
+} from './types';
+
+// ─── Schema ──────────────────────────────────────────────────────────
 
 interface SadhanaDB extends DBSchema {
   user: {
     key: string;
-    value: {
-      id: string;
-      name: string;
-      sankalp: string;
-      xp: number;
-      streak: number;
-      lastActiveDate: string;
-      onboardingCompleted: boolean;
-      theme?: 'midnight' | 'dawn' | 'temple';
-      hapticsEnabled?: boolean;
-      dailyGoals?: {
-        malas?: number;
-        focusMinutes?: number;
-        breatheSessions?: number;
-      };
-    };
+    value: UserData;
   };
   journal: {
     key: string;
-    value: {
-      id: string;
-      date: string;
-      text: string;
-      mood?: string;
-    };
+    value: JournalEntry;
     indexes: { 'by-date': string };
   };
   course: {
     key: number;
-    value: {
-      day: number;
-      completed: boolean;
-      completedAt?: string;
-    };
+    value: CourseCompletion;
   };
   sessions: {
     key: string;
-    value: {
-      id: string;
-      date: string;
-      type: string; // Changed from 'mala' | 'focus' | 'breathe' to string to support custom
-      count?: number;
-      durationMinutes?: number;
-      customTypeName?: string;
-    };
+    value: Session;
     indexes: { 'by-date': string };
   };
   customAudio: {
     key: string;
-    value: {
-      id: string;
-      name: string;
-      blob: Blob;
-    };
+    value: CustomAudioRecord;
   };
   mantraPresets: {
     key: string;
-    value: {
-      id: string;
-      name: string;
-      mantra: string;
-      target: number;
-    };
+    value: MantraPreset;
   };
   customSessionTypes: {
     key: string;
-    value: {
-      id: string;
-      name: string;
-      icon?: string;
-      color?: string;
-    };
+    value: CustomSessionType;
   };
   chantChallenges: {
     key: string;
-    value: {
-      id: string;
-      name: string;
-      target: number;
-      progress: number;
-      deadline?: string;
-      completed: boolean;
-    };
+    value: ChantChallenge;
   };
   customMeditations: {
     key: string;
-    value: {
-      id: string;
-      name: string;
-      duration: number;
-      blob: Blob;
-    };
+    value: CustomMeditationRecord;
   };
 }
+
+// ─── Singleton ───────────────────────────────────────────────────────
 
 let dbPromise: Promise<IDBPDatabase<SadhanaDB>>;
 
@@ -133,117 +91,135 @@ export function initDB() {
   return dbPromise;
 }
 
-export async function getUser() {
+// ─── User ────────────────────────────────────────────────────────────
+
+export async function getUser(): Promise<UserData | undefined> {
   const db = await initDB();
   return db.get('user', 'main');
 }
 
-export async function saveUser(user: any) {
+export async function saveUser(user: UserData): Promise<void> {
   const db = await initDB();
   await db.put('user', { ...user, id: 'main' });
 }
 
-export async function getJournalEntries() {
+// ─── Journal ─────────────────────────────────────────────────────────
+
+export async function getJournalEntries(): Promise<JournalEntry[]> {
   const db = await initDB();
   return db.getAllFromIndex('journal', 'by-date');
 }
 
-export async function saveJournalEntry(entry: { id: string; date: string; text: string; mood?: string }) {
+export async function saveJournalEntry(entry: JournalEntry): Promise<void> {
   const db = await initDB();
   await db.put('journal', entry);
 }
 
-export async function getCourseProgress() {
+// ─── Course ──────────────────────────────────────────────────────────
+
+export async function getCourseProgress(): Promise<CourseCompletion[]> {
   const db = await initDB();
   return db.getAll('course');
 }
 
-export async function saveCourseProgress(day: number, completed: boolean) {
+export async function saveCourseProgress(day: number, completed: boolean): Promise<void> {
   const db = await initDB();
   await db.put('course', { day, completed, completedAt: new Date().toISOString() });
 }
 
-export async function getSessions() {
+// ─── Sessions ────────────────────────────────────────────────────────
+
+export async function getSessions(): Promise<Session[]> {
   const db = await initDB();
   return db.getAllFromIndex('sessions', 'by-date');
 }
 
-export async function saveSession(session: any) {
+export async function saveSession(session: Session): Promise<void> {
   const db = await initDB();
   await db.put('sessions', session);
 }
 
-export async function getCustomAudio() {
+// ─── Custom Audio ────────────────────────────────────────────────────
+
+export async function getCustomAudio(): Promise<CustomAudioRecord[]> {
   const db = await initDB();
   return db.getAll('customAudio');
 }
 
-export async function saveCustomAudio(audio: { id: string; name: string; blob: Blob }) {
+export async function saveCustomAudio(audio: CustomAudioRecord): Promise<void> {
   const db = await initDB();
   await db.put('customAudio', audio);
 }
 
-export async function deleteCustomAudio(id: string) {
+export async function deleteCustomAudio(id: string): Promise<void> {
   const db = await initDB();
   await db.delete('customAudio', id);
 }
 
-export async function getMantraPresets() {
+// ─── Mantra Presets ──────────────────────────────────────────────────
+
+export async function getMantraPresets(): Promise<MantraPreset[]> {
   const db = await initDB();
   return db.getAll('mantraPresets');
 }
 
-export async function saveMantraPreset(preset: { id: string; name: string; mantra: string; target: number }) {
+export async function saveMantraPreset(preset: MantraPreset): Promise<void> {
   const db = await initDB();
   await db.put('mantraPresets', preset);
 }
 
-export async function deleteMantraPreset(id: string) {
+export async function deleteMantraPreset(id: string): Promise<void> {
   const db = await initDB();
   await db.delete('mantraPresets', id);
 }
 
-export async function getCustomSessionTypes() {
+// ─── Custom Session Types ────────────────────────────────────────────
+
+export async function getCustomSessionTypes(): Promise<CustomSessionType[]> {
   const db = await initDB();
   return db.getAll('customSessionTypes');
 }
 
-export async function saveCustomSessionType(type: { id: string; name: string; icon?: string; color?: string }) {
+export async function saveCustomSessionType(type: CustomSessionType): Promise<void> {
   const db = await initDB();
   await db.put('customSessionTypes', type);
 }
 
-export async function deleteCustomSessionType(id: string) {
+export async function deleteCustomSessionType(id: string): Promise<void> {
   const db = await initDB();
   await db.delete('customSessionTypes', id);
 }
 
-export async function getChantChallenges() {
+// ─── Chant Challenges ────────────────────────────────────────────────
+
+export async function getChantChallenges(): Promise<ChantChallenge[]> {
   const db = await initDB();
   return db.getAll('chantChallenges');
 }
 
-export async function saveChantChallenge(challenge: { id: string; name: string; target: number; progress: number; deadline?: string; completed: boolean }) {
+export async function saveChantChallenge(challenge: ChantChallenge): Promise<void> {
   const db = await initDB();
   await db.put('chantChallenges', challenge);
 }
 
-export async function deleteChantChallenge(id: string) {
+export async function deleteChantChallenge(id: string): Promise<void> {
   const db = await initDB();
   await db.delete('chantChallenges', id);
 }
 
-export async function getCustomMeditations() {
+// ─── Custom Meditations ──────────────────────────────────────────────
+
+export async function getCustomMeditations(): Promise<CustomMeditationRecord[]> {
   const db = await initDB();
   return db.getAll('customMeditations');
 }
 
-export async function saveCustomMeditation(meditation: { id: string; name: string; duration: number; blob: Blob }) {
+export async function saveCustomMeditation(meditation: CustomMeditationRecord): Promise<void> {
   const db = await initDB();
   await db.put('customMeditations', meditation);
 }
 
-export async function deleteCustomMeditation(id: string) {
+export async function deleteCustomMeditation(id: string): Promise<void> {
   const db = await initDB();
   await db.delete('customMeditations', id);
 }

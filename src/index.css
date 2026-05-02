@@ -122,3 +122,81 @@ body {
   padding-bottom: env(safe-area-inset-bottom);
 }
 
+
+/* Cosmic Themes */
+
+.theme-ekadashi {
+  --slate-950: #f0fdfa;
+  --slate-900: #ccfbf1;
+  --slate-800: #99f6e4;
+  --slate-700: #5eead4;
+  --slate-600: #2dd4bf;
+  --slate-500: #14b8a6;
+  --slate-400: #0d9488;
+  --slate-300: #0f766e;
+  --slate-200: #115e59;
+  --slate-100: #134e4a;
+  --white: #042f2e;
+
+  --orange-400: #5eead4;
+  --orange-500: #14b8a6;
+  --orange-600: #0f766e;
+  --orange-900: #ccfbf1;
+}
+
+.theme-purnima {
+  --slate-950: #fafaf9;
+  --slate-900: #f5f5f4;
+  --slate-800: #e7e5e4;
+  --slate-700: #d6d3d1;
+  --slate-600: #a8a29e;
+  --slate-500: #78716c;
+  --slate-400: #57534e;
+  --slate-300: #44403c;
+  --slate-200: #292524;
+  --slate-100: #1c1917;
+  --white: #0c0a09;
+
+  --orange-400: #cbd5e1;
+  --orange-500: #94a3b8;
+  --orange-600: #64748b;
+  --orange-900: #f1f5f9;
+}
+
+.theme-amavasya {
+  --slate-950: #000000;
+  --slate-900: #09090b;
+  --slate-800: #18181b;
+  --slate-700: #27272a;
+  --slate-600: #3f3f46;
+  --slate-500: #52525b;
+  --slate-400: #71717a;
+  --slate-300: #a1a1aa;
+  --slate-200: #d4d4d8;
+  --slate-100: #e4e4e7;
+  --white: #fafafa;
+
+  --orange-400: #a1a1aa;
+  --orange-500: #71717a;
+  --orange-600: #52525b;
+  --orange-900: #18181b;
+}
+
+.theme-shivratri {
+  --slate-950: #0b0f19;
+  --slate-900: #111827;
+  --slate-800: #1f2937;
+  --slate-700: #374151;
+  --slate-600: #4b5563;
+  --slate-500: #6b7280;
+  --slate-400: #9ca3af;
+  --slate-300: #d1d5db;
+  --slate-200: #e5e7eb;
+  --slate-100: #f3f4f6;
+  --white: #ffffff;
+
+  --orange-400: #8b5cf6;
+  --orange-500: #6366f1;
+  --orange-600: #4f46e5;
+  --orange-900: #312e81;
+}
